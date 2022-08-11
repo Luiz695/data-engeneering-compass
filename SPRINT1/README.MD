@@ -89,7 +89,7 @@ ORDER BY 2 DESC
 ;
 ```
 ### g) Listar qual é o autor com menos ou nenhuma publicação
-```
+```sh
 SELECT  DISTINCT A.Nome, COUNT(L.Cod) AS QTD_PUBLI 
 FROM programa_bolsas.AUTOR A
 LEFT JOIN programa_bolsas.LIVRO L
@@ -98,4 +98,35 @@ GROUP BY A.Nome
 HAVING QTD_PUBLI <1
 ORDER BY 1 
 ;
+```
+## 4. Criar e executar as consultas abaixo sobre o modelo de dados de uma Loja:
+### a) selecione o nome e o código do vendedor com o maior número de vendas.
+```sh
+```
+### b) selecione o produto mais vendido entre as datas de 2014-02-03 até 2018-02-02.
+```sh
+```
+### c) calcule a comissão dos vendedores.
+```sh
+```
+### d) selecione o cliente que mais gastou.
+```sh
+```
+### e) selecione a escola que mais gastou
+```sh
+```
+### f) selecione os 10 produtos menos vendidos por ecommerce e pela matriz.
+```sh
+```
+### g) calcule a média de gasto por estado.
+```sh
+```
+### h) selecione todos os registros deletados 
+```sh
+```
+### i) calcule a média da quantidade vendida de cada produto por estado 
+```sh
+```
+### j) selecione os gastos por dependente
+```sh
 ```
