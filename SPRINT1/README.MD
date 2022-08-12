@@ -31,7 +31,7 @@ ORDER BY 2 DESC
 LIMIT 10
 ;
 ```
-### c) Listar as 5 editoras que mais tem maior quantidade de livros na biblioteca
+### c) Listar as 5 editoras que tem maior quantidade de livros na biblioteca
 ```sh
 SELECT 
 	GROUP_CONCAT(Nome SEPARATOR ' || ') AS Editoras
@@ -91,7 +91,7 @@ LIMIT 1
 ```
 ### g) Listar qual é o autor com menos ou nenhuma publicação
 ```sh
-# 0 publicações
+# nenhuma publicação
 SELECT DISTINCT
     A.Nome
     ,COUNT(L.Cod) AS QTD_PUBLI
@@ -103,7 +103,7 @@ GROUP BY A.Nome
 HAVING QTD_PUBLI < 1
 ORDER BY 1
 ;
-# menor número de publicação
+# menos publicações
 SELECT DISTINCT
     A.Nome
     ,COUNT(L.Cod) AS QTD_PUBLI
@@ -120,31 +120,108 @@ LIMIT 1
 ## 4. Criar e executar as consultas abaixo sobre o modelo de dados de uma Loja:
 ### a) selecione o nome e o código do vendedor com o maior número de vendas.
 ```sh
+SELECT 
+    A.Vendedor, MAX(num_vendas) AS max_vendas
+FROM
+    (SELECT 
+        Vr.NmVdd AS Vendedor, COUNT(Vs.CdVen) AS num_vendas
+    FROM
+        TbVendedor Vr
+    RIGHT JOIN TbVendas Vs ON Vr.CdVdd = Vs.CdVdd
+    WHERE
+        status = 'Concluído'
+    GROUP BY Vr.NmVdd) A
+    ;
 ```
 ### b) selecione o produto mais vendido entre as datas de 2014-02-03 até 2018-02-02.
 ```sh
+SELECT 
+    B.NmPro AS produto,
+    MAX(B.quantidade_vendida) AS quantidade_vendida
+FROM
+    (SELECT 
+        NmPro, COUNT(NmPro) * A.Qtd AS quantidade_vendida, A.Und
+    FROM
+        TbVendas A
+    WHERE
+        DtVen BETWEEN '2014-02-03' AND '2018-02-02'
+            AND status = 'Concluído'
+    GROUP BY NmPro) B
+    ;
 ```
 ### c) calcule a comissão dos vendedores.
 ```sh
+SELECT 
+    B.CdVdd AS codigo_vendedor,
+    B.NmVdd AS nome_vendedor,
+    A.Qtd * A.VrUnt AS valor_vendido,
+    CONCAT(B.PercComissao, '%') AS comissão,
+    FORMAT(A.Qtd * A.VrUnt * B.PercComissao / 100,
+        2) AS valor_comissão,
+    FORMAT((A.Qtd * A.VrUnt) + (A.Qtd * A.VrUnt * B.PercComissao / 100),
+        2) AS Total
+FROM
+    TbVendas A
+        INNER JOIN
+    TbVendedor B ON A.CdVdd = B.CdVdd
+		WHERE
+        status = 'Concluído'
+GROUP BY B.CdVdd
+;
 ```
 ### d) selecione o cliente que mais gastou.
 ```sh
+SELECT 
+    B.cliente, MAX(B.valor_gasto) AS gasto
+FROM
+    (SELECT 
+        A.CdCli AS codigo,
+            A.NmCli AS cliente,
+            SUM(Qtd * VrUnt) AS valor_gasto
+    FROM
+        TbVendas A
+    WHERE
+        status = 'Concluído'
+    GROUP BY A.NmCli) B
+;
 ```
 ### e) selecione a escola que mais gastou
 ```sh
+não é possivel 
+#usar case when para mostrar nome da escola 
+#exibir  vendedor - escola do filho 
+# mostrar reverse eng para mostrar que 
+# não existe essa relação 
 ```
 ### f) selecione os 10 produtos menos vendidos por ecommerce e pela matriz.
 ```sh
 ```
 ### g) calcule a média de gasto por estado.
 ```sh
+SELECT 
+    A.Estado, FORMAT(AVG(Qtd * VrUnt), 2) AS media_gasto
+FROM
+    TbVendas A
+WHERE
+    status = 'Concluído'
+GROUP BY A.Estado
+ORDER BY Estado
+;
 ```
 ### h) selecione todos os registros deletados 
 ```sh
+SELECT 
+    *
+FROM
+    TbVendas
+WHERE
+    deletado = 1
+;
 ```
 ### i) calcule a média da quantidade vendida de cada produto por estado 
 ```sh
 ```
 ### j) selecione os gastos por dependente
 ```sh
+não é possivel 
 ```
