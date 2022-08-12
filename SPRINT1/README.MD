@@ -192,19 +192,19 @@ FROM
     CASE
         WHEN B.InepEscola = '52096602' THEN 'ESCOLA MUNICIPAL CECILIA MEIRELES'
         WHEN B.InepEscola = '35985740' THEN 'CEL JTO A EE MINISTRO JOSE MOURA RESENDE'
-         WHEN B.InepEscola = '29464862' THEN 'CENTRO EDUCACIONAL BETH SHALOM'
-          WHEN B.InepEscola = '42114322' THEN 'COLEGIO CAMINHO FELIZ'
+        WHEN B.InepEscola = '29464862' THEN 'CENTRO EDUCACIONAL BETH SHALOM'
+        WHEN B.InepEscola = '42114322' THEN 'COLEGIO CAMINHO FELIZ'
         ELSE 'ESCOLA NÃO IDENTIFICADA'
     END AS nome_escola
 FROM
     TbVendedor A
         RIGHT JOIN
     TbDependente B ON A.CdVdd = B.CdVdd
-;
 
-SELECT * 
-FROM TbVendas C
-;
+SELECT 
+    *
+FROM
+    TbVendas C
 
 # os campos C.CdCli e B.Inep escola não possuem relacionamento na atual base de dados
 
@@ -223,13 +223,13 @@ WHERE
         AND NmCanalVendas = 'Matriz'
         OR NmCanalVendas = 'Ecommerce'
 GROUP BY A.CdPro , Canal
-ORDER BY 2 , Canal ASC;
+ORDER BY 2 ;
 ```
 ### g) calcule a média de gasto por estado.
 ```sh
 SELECT 
-    Estado,
-    FORMAT(SUM(Qtd * VrUnt) # valor gasto por registro de venda
+    Estado
+    ,FORMAT(SUM(Qtd * VrUnt) # valor gasto por registro de venda
     / COUNT(Estado) # quantidade registro de vendas no estado
     ,2) AS media_gastos
 FROM
@@ -253,11 +253,11 @@ WHERE
 SELECT 
     NmPro AS produto,
     FORMAT(SUM(Qtd) / COUNT(NmPro), 2) AS quantidade_media,
-    Estado AS estado
+    Estado 
 FROM
     TbVendas
 GROUP BY Cidade
-ORDER BY Estado;
+ORDER BY 3;
 ```
 ### j) selecione os gastos por dependente
 ```sh
