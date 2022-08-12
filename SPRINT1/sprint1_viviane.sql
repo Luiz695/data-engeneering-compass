@@ -182,17 +182,33 @@ FROM TbVendas C
 ;
 
 # os campos C.CdCli e B.Inep escola não possuem relacionamento na atual base de dados
-#4f - inserir
-#4g
+
+#4f 
 SELECT 
-    A.Estado, FORMAT(AVG(Qtd * VrUnt), 2) AS Media_gasto
+    A.NmPro AS Nome_Produto,
+    COUNT(A.CdPro) AS Vendas,
+    NmCanalVendas AS Canal
 FROM
     TbVendas A
 WHERE
-    status = 'Concluído'
-GROUP BY A.Estado
-ORDER BY Estado
+    A.status ='Concluido'
+        AND NmCanalVendas = 'Matriz'
+        OR NmCanalVendas = 'Ecommerce'
+GROUP BY A.CdPro , Canal
+ORDER BY 2 ;
+
+#4g
+SELECT 
+    Estado
+    ,FORMAT(SUM(Qtd * VrUnt) # valor gasto por registro de venda
+    / COUNT(Estado) # quantidade registro de vendas no estado
+    ,2) AS media_gastos
+FROM
+    TbVendas
+GROUP BY Estado
+ORDER BY 1
 ;
+
 #4h
 SELECT 
     *
@@ -201,7 +217,17 @@ FROM
 WHERE
     deletado = 1
 ;
+
 #4i
+SELECT 
+    NmPro AS produto,
+    FORMAT(SUM(Qtd) / COUNT(NmPro), 2) AS Quantidade_media,
+    Estado 
+FROM
+    TbVendas
+GROUP BY Cidade
+ORDER BY 3;
+
 #4j
 SELECT 
     *

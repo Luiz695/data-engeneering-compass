@@ -5,7 +5,7 @@
 ### a) Listar todos os livros publicados após 2014
 ```sh
 SELECT 
-    Titulo
+    Titulo AS Livro
     ,DATE_FORMAT(Publicacao, '%d/%m/%y') AS Data_Publicacao
 FROM
     programa_bolsas.LIVRO
@@ -35,32 +35,31 @@ LIMIT 10
 ```sh
 SELECT 
 	GROUP_CONCAT(Nome SEPARATOR ' || ') AS Editoras
-	,A.QTD_LIVROS
+	,A.Quantidade_livros
 FROM 
 	(SELECT 
 		E.Nome
-		,COUNT(L.Cod) AS QTD_LIVROS
+		,COUNT(L.Cod) AS Quantidade_livros
 	FROM
 		programa_bolsas.EDITORA E
 			LEFT JOIN
 		programa_bolsas.LIVRO L ON E.CodEditora = L.Editora
 	GROUP BY E.Nome)A 
-GROUP BY A.QTD_LIVROS
+GROUP BY A.Quantidade_livros
 ORDER BY 2 DESC
 LIMIT 5
 ;
 ```
 ### d) Listar a quantidade de publicações de cada autor
 ```sh
-SELECT DISTINCT
-    A.Nome AS AUTOR
-    ,COUNT(L.Cod) AS QTD_LIVROS
+SELECT 
+    E.Nome AS Editora
+    ,COUNT(L.Publicacao) AS Quantidade_livros
 FROM
-    programa_bolsas.AUTOR A
+    programa_bolsas.EDITORA E
         LEFT JOIN
-    programa_bolsas.LIVRO L ON A.CodAutor = L.Autor
-GROUP BY A.Nome
-ORDER BY 1
+    programa_bolsas.LIVRO L ON E.CodEditora = L.Editora
+GROUP BY E.Nome
 ;
 ```
 ### e) Listar a quantidade de publicações de cada editora
@@ -78,8 +77,8 @@ GROUP BY E.Nome
 ### f) Listar qual é o autor com mais publicações
 ```sh
 SELECT DISTINCT
-    A.Nome
-    ,COUNT(L.Cod) AS QTD_PUBLI
+    A.Nome AS Autor
+    ,COUNT(L.Cod) AS Quantidade_livros
 FROM
     programa_bolsas.AUTOR A
         LEFT JOIN
@@ -94,25 +93,25 @@ LIMIT 1
 # nenhuma publicação
 SELECT DISTINCT
     A.Nome
-    ,COUNT(L.Cod) AS QTD_PUBLI
+    ,COUNT(L.Cod) AS Quantidade_livros
 FROM
     programa_bolsas.AUTOR A
         LEFT JOIN
     programa_bolsas.LIVRO L ON A.CodAutor = L.Autor
 GROUP BY A.Nome
-HAVING QTD_PUBLI < 1
+HAVING Quantidade_livros < 1
 ORDER BY 1
 ;
 # menos publicações
 SELECT DISTINCT
     A.Nome
-    ,COUNT(L.Cod) AS QTD_PUBLI
+    ,COUNT(L.Cod) AS Quantidade_livros
 FROM
     programa_bolsas.AUTOR A
         LEFT JOIN
     programa_bolsas.LIVRO L ON A.CodAutor = L.Autor
 GROUP BY A.Nome
-HAVING QTD_PUBLI > 1
+HAVING Quantidade_livros > 1
 ORDER BY 2
 LIMIT 1
 ;
@@ -121,10 +120,12 @@ LIMIT 1
 ### a) selecione o nome e o código do vendedor com o maior número de vendas.
 ```sh
 SELECT 
-    A.Vendedor, MAX(num_vendas) AS max_vendas
+    A.Vendedor
+    , MAX(num_vendas) AS Vendas
 FROM
     (SELECT 
-        Vr.NmVdd AS Vendedor, COUNT(Vs.CdVen) AS num_vendas
+        Vr.NmVdd AS Vendedor
+        , COUNT(Vs.CdVen) AS num_vendas
     FROM
         TbVendedor Vr
     RIGHT JOIN TbVendas Vs ON Vr.CdVdd = Vs.CdVdd
@@ -136,8 +137,8 @@ FROM
 ### b) selecione o produto mais vendido entre as datas de 2014-02-03 até 2018-02-02.
 ```sh
 SELECT 
-    B.NmPro AS produto,
-    MAX(B.quantidade_vendida) AS quantidade_vendida
+    B.NmPro AS Produto
+    ,MAX(B.quantidade_vendida) AS Quantidade_vendida
 FROM
     (SELECT 
         NmPro, COUNT(NmPro) * A.Qtd AS quantidade_vendida, A.Und
@@ -152,14 +153,12 @@ FROM
 ### c) calcule a comissão dos vendedores.
 ```sh
 SELECT 
-    B.CdVdd AS codigo_vendedor,
-    B.NmVdd AS nome_vendedor,
-    A.Qtd * A.VrUnt AS valor_vendido,
-    CONCAT(B.PercComissao, '%') AS comissão,
-    FORMAT(A.Qtd * A.VrUnt * B.PercComissao / 100,
-        2) AS valor_comissão,
-    FORMAT((A.Qtd * A.VrUnt) + (A.Qtd * A.VrUnt * B.PercComissao / 100),
-        2) AS Total
+    B.CdVdd AS Codigo_vendedor
+    ,B.NmVdd AS Nome_vendedor
+    ,A.Qtd * A.VrUnt AS Valor_vendido,
+    CONCAT(B.PercComissao, '%') AS Comissão,
+    FORMAT(A.Qtd * A.VrUnt * B.PercComissao / 100, 2) AS Valor_comissão,
+    FORMAT((A.Qtd * A.VrUnt) + (A.Qtd * A.VrUnt * B.PercComissao / 100), 2) AS Total
 FROM
     TbVendas A
         INNER JOIN
@@ -172,12 +171,13 @@ GROUP BY B.CdVdd
 ### d) selecione o cliente que mais gastou.
 ```sh
 SELECT 
-    B.cliente, MAX(B.valor_gasto) AS gasto
+    B.cliente AS Cliente
+    ,MAX(B.valor_gasto) AS Gasto
 FROM
     (SELECT 
-        A.CdCli AS codigo,
-            A.NmCli AS cliente,
-            SUM(Qtd * VrUnt) AS valor_gasto
+        A.CdCli AS codigo
+        ,A.NmCli AS cliente
+        ,SUM(Qtd * VrUnt) AS valor_gasto
     FROM
         TbVendas A
     WHERE
@@ -192,26 +192,27 @@ FROM
     CASE
         WHEN B.InepEscola = '52096602' THEN 'ESCOLA MUNICIPAL CECILIA MEIRELES'
         WHEN B.InepEscola = '35985740' THEN 'CEL JTO A EE MINISTRO JOSE MOURA RESENDE'
-        WHEN B.InepEscola = '29464862' THEN 'CENTRO EDUCACIONAL BETH SHALOM'
-        WHEN B.InepEscola = '42114322' THEN 'COLEGIO CAMINHO FELIZ'
+         WHEN B.InepEscola = '29464862' THEN 'CENTRO EDUCACIONAL BETH SHALOM'
+          WHEN B.InepEscola = '42114322' THEN 'COLEGIO CAMINHO FELIZ'
         ELSE 'ESCOLA NÃO IDENTIFICADA'
-    END AS nome_escola
+    END AS Nome_escola
 FROM
     TbVendedor A
         RIGHT JOIN
     TbDependente B ON A.CdVdd = B.CdVdd
+;
 
-SELECT 
-    *
-FROM
-    TbVendas C
+SELECT * 
+FROM TbVendas C
+;
 
 # os campos C.CdCli e B.Inep escola não possuem relacionamento na atual base de dados
+
 
 ```
 ### f) selecione os 10 produtos menos vendidos por ecommerce e pela matriz.
 ```sh
-
+ 
 SELECT 
     A.NmPro AS Nome_Produto,
     COUNT(A.CdPro) AS Vendas,
@@ -224,6 +225,7 @@ WHERE
         OR NmCanalVendas = 'Ecommerce'
 GROUP BY A.CdPro , Canal
 ORDER BY 2 ;
+
 ```
 ### g) calcule a média de gasto por estado.
 ```sh
@@ -248,11 +250,12 @@ WHERE
     deletado = 1
 ;
 ```
+
 ### i) calcule a média da quantidade vendida de cada produto por estado 
 ```sh
 SELECT 
     NmPro AS produto,
-    FORMAT(SUM(Qtd) / COUNT(NmPro), 2) AS quantidade_media,
+    FORMAT(SUM(Qtd) / COUNT(NmPro), 2) AS Quantidade_media,
     Estado 
 FROM
     TbVendas
