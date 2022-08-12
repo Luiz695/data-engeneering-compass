@@ -187,11 +187,27 @@ FROM
 ```
 ### e) selecione a escola que mais gastou
 ```sh
-não é possivel 
-#usar case when para mostrar nome da escola 
-#exibir  vendedor - escola do filho 
-# mostrar reverse eng para mostrar que 
-# não existe essa relação 
+ SELECT 
+    *,
+    CASE
+        WHEN B.InepEscola = '52096602' THEN 'ESCOLA MUNICIPAL CECILIA MEIRELES'
+        WHEN B.InepEscola = '35985740' THEN 'CEL JTO A EE MINISTRO JOSE MOURA RESENDE'
+         WHEN B.InepEscola = '29464862' THEN 'CENTRO EDUCACIONAL BETH SHALOM'
+          WHEN B.InepEscola = '42114322' THEN 'COLEGIO CAMINHO FELIZ'
+        ELSE 'ESCOLA NÃO IDENTIFICADA'
+    END AS nome_escola
+FROM
+    TbVendedor A
+        RIGHT JOIN
+    TbDependente B ON A.CdVdd = B.CdVdd
+;
+
+SELECT * 
+FROM TbVendas C
+;
+
+# os campos C.CdCli e B.Inep escola não possuem relacionamento na atual base de dados
+
 ```
 ### f) selecione os 10 produtos menos vendidos por ecommerce e pela matriz.
 ```sh
@@ -223,5 +239,19 @@ WHERE
 ```
 ### j) selecione os gastos por dependente
 ```sh
-não é possivel 
+SELECT 
+    *
+FROM
+    TbVendedor A
+        RIGHT JOIN
+    TbDependente B ON A.CdVdd = B.CdVdd
+;
+
+SELECT * 
+FROM TbVendas C
+;
+
+# os campos C.CdCli e B.CdDep não possuem relacionamento na atual base de dados, 
+# apenas C.CdCli podem efetuar compras, por esse motivo não é possível agrupar os gastos por dependente.
+
 ```
