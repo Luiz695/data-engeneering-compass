@@ -202,7 +202,7 @@ SELECT
     Estado
     ,FORMAT(SUM(Qtd * VrUnt) # valor gasto por registro de venda
     / COUNT(Estado) # quantidade registro de vendas no estado
-    ,2) AS media_gastos
+    ,2) AS Media_gastos
 FROM
     TbVendas
 GROUP BY Estado
@@ -220,7 +220,7 @@ WHERE
 
 #4i
 SELECT 
-    NmPro AS produto,
+    NmPro AS Produto,
     FORMAT(SUM(Qtd) / COUNT(NmPro), 2) AS Quantidade_media,
     Estado 
 FROM
