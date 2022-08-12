@@ -211,17 +211,31 @@ FROM TbVendas C
 ```
 ### f) selecione os 10 produtos menos vendidos por ecommerce e pela matriz.
 ```sh
+
+SELECT 
+    A.NmPro AS Nome_Produto,
+    COUNT(A.CdPro) AS Vendas,
+    NmCanalVendas AS Canal
+FROM
+    TbVendas A
+WHERE
+    A.status ='Concluido'
+        AND NmCanalVendas = 'Matriz'
+        OR NmCanalVendas = 'Ecommerce'
+GROUP BY A.CdPro , Canal
+ORDER BY 2 , Canal ASC;
 ```
 ### g) calcule a média de gasto por estado.
 ```sh
 SELECT 
-    A.Estado, FORMAT(AVG(Qtd * VrUnt), 2) AS media_gasto
+    Estado,
+    FORMAT(SUM(Qtd * VrUnt) # valor gasto por registro de venda
+    / COUNT(Estado) # quantidade registro de vendas no estado
+    ,2) AS media_gastos
 FROM
-    TbVendas A
-WHERE
-    status = 'Concluído'
-GROUP BY A.Estado
-ORDER BY Estado
+    TbVendas
+GROUP BY Estado
+ORDER BY 1
 ;
 ```
 ### h) selecione todos os registros deletados 
@@ -236,6 +250,14 @@ WHERE
 ```
 ### i) calcule a média da quantidade vendida de cada produto por estado 
 ```sh
+SELECT 
+    NmPro AS produto,
+    FORMAT(SUM(Qtd) / COUNT(NmPro), 2) AS quantidade_media,
+    Estado AS estado
+FROM
+    TbVendas
+GROUP BY Cidade
+ORDER BY Estado;
 ```
 ### j) selecione os gastos por dependente
 ```sh
